@@ -8,8 +8,11 @@ const UploadForm = ({ setSchedules }) => {
   const handleUpload = (event) => {
     const uploadedFile = event.target.files[0];
     if (uploadedFile) {
-      setFile(uploadedFile);
-      console.log("✅ File terupload:", uploadedFile.name);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setFile({ name: uploadedFile.name, data: e.target.result });
+      };
+      reader.readAsDataURL(uploadedFile);
     }
   };
 
@@ -20,7 +23,7 @@ const UploadForm = ({ setSchedules }) => {
         file: file.name,
         time,
         day,
-        audio: URL.createObjectURL(file), // Membuat URL untuk file audio
+        audio: file.data, // Simpan dalam format base64
       };
 
       console.log("✅ Menambahkan lagu:", newSchedule);
@@ -28,13 +31,12 @@ const UploadForm = ({ setSchedules }) => {
       setSchedules((prevSchedules) => {
         const updatedSchedules = [...prevSchedules, newSchedule];
 
-        // Simpan ke localStorage setiap kali state diperbarui
+        // Simpan ke localStorage
         localStorage.setItem("schedules", JSON.stringify(updatedSchedules));
 
         return updatedSchedules;
       });
 
-      // Reset input setelah submit
       setFile(null);
       setTime("");
       setDay("Senin");
@@ -43,12 +45,11 @@ const UploadForm = ({ setSchedules }) => {
     }
   };
 
-  // Reset input file saat file dihapus
   useEffect(() => {
     if (file === null) {
       const fileInput = document.getElementById("file");
       if (fileInput) {
-        fileInput.value = ""; // Resetkan input file
+        fileInput.value = "";
       }
     }
   }, [file]);

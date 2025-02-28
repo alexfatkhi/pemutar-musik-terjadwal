@@ -5,8 +5,14 @@ const ScheduleList = ({ schedules, setSchedules }) => {
   const handleDelete = (index) => {
     const updatedSchedules = schedules.filter((_, i) => i !== index); // Hapus jadwal berdasarkan index
     console.log("✅ Jadwal setelah dihapus:", updatedSchedules);
+    
     setSchedules(updatedSchedules); // Perbarui state jadwal
-    localStorage.setItem("schedules", JSON.stringify(updatedSchedules)); // Simpan ke localStorage
+    
+    if (updatedSchedules.length > 0) {
+      localStorage.setItem("schedules", JSON.stringify(updatedSchedules)); // Simpan ke localStorage
+    } else {
+      localStorage.removeItem("schedules"); // Hapus dari localStorage kalau kosong
+    }
   };
 
   useEffect(() => {
@@ -28,12 +34,17 @@ const ScheduleList = ({ schedules, setSchedules }) => {
           schedule.time === currentTime && schedule.day === currentDay
       );
 
-      if (scheduledSong) {
+      if (scheduledSong && scheduledSong.audio) {
         console.log(
           `🎵 Memainkan lagu: ${scheduledSong.file} pada ${scheduledSong.time}`
         );
-        const audio = new Audio(scheduledSong.audio);
-        audio.play().catch((err) => console.log("❌ Playback error:", err));
+
+        try {
+          const audio = new Audio(scheduledSong.audio);
+          audio.play().catch((err) => console.log("❌ Playback error:", err));
+        } catch (error) {
+          console.error("🚨 Error memutar audio:", error);
+        }
       }
     };
 

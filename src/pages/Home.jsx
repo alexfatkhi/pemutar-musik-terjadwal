@@ -9,7 +9,6 @@ const Home = () => {
     return savedSchedules ? JSON.parse(savedSchedules) : [];
   });
 
-  // Menyimpan jadwal ke localStorage setiap kali jadwal berubah
   useEffect(() => {
     localStorage.setItem("schedules", JSON.stringify(schedules));
   }, [schedules]);
@@ -17,7 +16,7 @@ const Home = () => {
   useEffect(() => {
     const checkSchedule = () => {
       const now = new Date();
-      const currentTime = now.toTimeString().slice(0, 5); // Format: "HH:MM"
+      const currentTime = now.toTimeString().slice(0, 5);
       const currentDay = [
         "Minggu",
         "Senin",
@@ -34,9 +33,8 @@ const Home = () => {
       );
 
       if (scheduledSong) {
-        console.log(
-          `🎵 Memainkan lagu: ${scheduledSong.file} pada ${scheduledSong.time}`
-        );
+        console.log(`🎵 Memainkan lagu: ${scheduledSong.file} pada ${scheduledSong.time}`);
+
         const audio = new Audio(scheduledSong.audio);
         audio.play().catch((err) => console.log("❌ Playback error:", err));
       }
